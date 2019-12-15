@@ -272,8 +272,8 @@ function init() {
       let colorFrequencyText = document.getElementById('color-frequency-number'); //text div
       let soundFrequencyText = document.getElementById('sound-frequency-number'); //text div
 
-      console.log('da canvas', context.canvas);
-      let pixel = context.getImageData(x, y, 1, 1); //x y pos of ever 1 x 1 pixel 
+      // console.log('da canvas', context.canvas);
+      let pixel = context.getImageData(x, y, 1, 1); //x y pos of ever 1 x 1 pixel
       let data = pixel.data;
       let rgb = 'rgb(' + data[0] + ', ' + data[1] + ', ' + data[2] + ')';
 
@@ -296,8 +296,8 @@ function init() {
       let colorFrequencyInfo = splitFrequencyInfo[0];
       let soundFrequencyInfo = splitFrequencyInfo[1];
 
-      console.log(colorFrequencyInfo);
-      console.log(soundFrequencyInfo);
+      // console.log(colorFrequencyInfo);
+      // console.log(soundFrequencyInfo);
 
       //change dom elements
       colorFrequencyText.innerHTML = colorFrequencyInfo; //change frequency text
@@ -397,7 +397,7 @@ function init() {
     //animate rect here
     //drawRect(fakeX, fakeY, binSize);
 
-    //mouse move 
+    //mouse move
     // canvas.addEventListener('mousemove', mouseMove());
 
     //animate ellipse here
@@ -547,7 +547,7 @@ function init() {
 
     //convert hue to wavelength
     //https://stackoverflow.com/questions/11850105/hue-to-wavelength-mapping
-    // Estimating that the usable part of the visible spectrum is 450-620nm, 
+    // Estimating that the usable part of the visible spectrum is 450-620nm,
     // with wavelength (in nm) and hue value (in degrees):
     let wavelength = Math.ceil(620 - 170 / 270 * h);
     //console.log('wavelength: ' + wavelength);
@@ -558,7 +558,7 @@ function init() {
     let colorFrequency = findFrequency(wavelength);
     let soundFrequency = findFreqPitch(colorFrequency);
 
-    console.log("hsl(" + h + "," + s + "%," + l + "%)" + "; " + "wavelength: " + wavelength + ";  ");
+    // console.log("hsl(" + h + "," + s + "%," + l + "%)" + "; " + "wavelength: " + wavelength + ";  ");
 
     return (colorFrequency + "," + soundFrequency);
 
@@ -586,19 +586,174 @@ function mapRange(colorFrequency, low1, high1, low2, high2) {
   return freqDrawValue;
 }
 
+///// START SOUND PASTE /////
+
 /////////* PLAY PITCH  *////////
 //set up color + pitch frequency
 let lowColFreq = 400;
 let highColFreq = 789;
-let lowPitchFreq = 0;
+let lowPitchFreq = 200;
 let highPitchFreq = 2000;
+
+//////////* TURN FREQUENCY INTO MIDI VALUES *//////
+//////////* from p5.sound.js library       *//////
+function freqToMidi (f) {
+  var mathlog2 = Math.log(f / 440) / Math.log(2);
+  var m = Math.round(12 * mathlog2) + 69;
+  return m;
+}
+
+//////////* TURN MIDI NOTES BACK INTO FREQUENCIES *//////
+//////////* from p5.sound.js library       *//////
+function midiToFreq (m) {
+  return 440 * Math.pow(2, (m - 69) / 12);
+}
+
+//////////* ARRAY TO HOLD A MUSICAL SCALE - "prometheus" *//////
+let scaleNotes = [  0, 2, 4, 6, 10, 12, 14, 16, 18, 22, 24, 26, 28, 30, 34, 36  ];
+
+let root = 60;
+let note = 0;
+let tunedNote, prevTunedNote = root;
+
+/////* FOR SMOOTHING VALUES */////
+function lerp (start, end, amt){
+  return (1-amt)*start+amt*end
+}
+
+/////* COMPARE FREQ AND SNAP TO A MIDI NOTE */////
+function makeMusic(freq) {
+  note = freqToMidi(freq);
+  console.log("before: " + note);
+
+  if (note <= root + scaleNotes[0])
+  {
+    note = root + scaleNotes[0];
+  }
+  else if (note > root  + scaleNotes[0] && note <= root + scaleNotes[1])
+  {
+   note = root + scaleNotes[1];
+  }
+  else if (note > root  + scaleNotes[1] && note <= root + scaleNotes[2])
+  {
+   note = root + scaleNotes[2];
+  }
+  else if (note > root  + scaleNotes[2] && note <= root + scaleNotes[3])
+  {
+   note = root + scaleNotes[3];
+  }
+  else if (note > root  + scaleNotes[3] && note <= root + scaleNotes[4])
+  {
+   note = root + scaleNotes[4];
+  }
+  else if (note > root  + scaleNotes[4] && note <= root + scaleNotes[5])
+  {
+   note = root + scaleNotes[5];
+  }
+  else if (note > root  + scaleNotes[5] && note <= root + scaleNotes[6])
+  {
+   note = root + scaleNotes[6];
+  }
+  else if (note > root  + scaleNotes[6] && note <= root + scaleNotes[7])
+  {
+   note = root + scaleNotes[7];
+  }
+  else if (note > root  + scaleNotes[7] && note <= root + scaleNotes[8])
+  {
+   note = root + scaleNotes[8];
+  }
+  else if (note > root  + scaleNotes[8] && note <= root + scaleNotes[9])
+  {
+   note = root + scaleNotes[9];
+  }
+  else if (note > root  + scaleNotes[9] && note <= root + scaleNotes[10])
+  {
+   note = root + scaleNotes[10];
+  }
+  else if (note > root  + scaleNotes[10] && note <= root + scaleNotes[11])
+  {
+   note = root + scaleNotes[11];
+  }
+  else if (note > root  + scaleNotes[11] && note <= root + scaleNotes[12])
+  {
+   note = root + scaleNotes[12];
+  }
+  else if (note > root  + scaleNotes[12] && note <= root + scaleNotes[13])
+  {
+   note = root + scaleNotes[13];
+  }
+  else if (note > root  + scaleNotes[13] && note <= root + scaleNotes[14])
+  {
+   note = root + scaleNotes[14];
+  }
+  else if (note > root  + scaleNotes[14] && note <= root + scaleNotes[15])
+  {
+   note = root + scaleNotes[15];
+  }
+  else if (note > root  + scaleNotes[15] && note <= root + scaleNotes[16])
+  {
+   note = root + scaleNotes[16];
+  }
+  else if (note > root  + scaleNotes[16] && note <= root + scaleNotes[17])
+  {
+   note = root + scaleNotes[17];
+  }
+  else if (note > root  + scaleNotes[17] && note <= root + scaleNotes[18])
+  {
+   note = root + scaleNotes[18];
+  }
+  else if (note > root  + scaleNotes[18] && note <= root + scaleNotes[19])
+  {
+   note = root + scaleNotes[19];
+  }
+  else if (note > root  + scaleNotes[19] && note <= root + scaleNotes[20])
+  {
+   note = root + scaleNotes[20];
+  }
+  else if (note > root  + scaleNotes[20] && note <= root + scaleNotes[21])
+  {
+   note = root + scaleNotes[21];
+  }
+  else if (note > root  + scaleNotes[21] && note <= root + scaleNotes[22])
+  {
+   note = root + scaleNotes[22];
+  }
+  else if (note > root  + scaleNotes[22] && note <= root + scaleNotes[23])
+  {
+   note = root + scaleNotes[23];
+  }
+  else if (note > root  + scaleNotes[23] && note <= root + scaleNotes[24])
+  {
+   note = root + scaleNotes[24];
+  }
+
+  //Add some octave movement //
+  // let rand = Math.random(0., 1.);
+  // if (rand > 0.2)
+  // {
+  //   note = note - 24;
+  // }
+  // else if (rand > 0.5)
+  // {
+  //   note = note - 12;
+  // }
+  // console.log(note);
+  tunedNote = midiToFreq(note - 24) ;
+  return tunedNote;
+  // let lerpNote = lerp(tunedNote, prevTunedNote, 0.4);
+  // return lerpNote
+  // prevTunedNote = tunedNote;
+}
+
 
 ///// * PLAY COLOR FREQ */////////
 function playFreq(frequency) {
   let freqPitch = Math.floor(mapRange(frequency, lowColFreq, highColFreq, lowPitchFreq, highPitchFreq));
-  //console.log("freq pitch: " + freqPitch);
-  startOsc(freqPitch);
-  return freqPitch
+
+  startOsc(makeMusic(freqPitch));
+
+  // startOsc(freqPitch);
+  // return freqPitch
 }
 
 function findFreqPitch(frequency) {
@@ -621,6 +776,7 @@ function startOsc(frequency) {
   oscillator = audioCtx.createOscillator(); //create oscillator each time function runs
 
   oscillator.type = 'square'; //this can't be sine for some reason
+  // oscillator.type = 'sine';
   oscillator.frequency.value = frequency; //frequency val to be passed in on event click
   // oscillator.frequency.setValueAtTime(3000, audioCtx.currentTime); // value in hertz *** THIS MAKES IT INFLEXIBLE / NOT ABLE TO CHANGE THE FREQUENCY WITH THIS **** DONT USE ****
 
@@ -628,9 +784,9 @@ function startOsc(frequency) {
 
   oscillator.start(audioCtx.currentTime);
 
-  // Create GainNode	
+  // Create GainNode
   gain = audioCtx.createGain(); // Create gain node
-  gain.gain.value = 2; // Set gain to half volume
+  gain.gain.value = 0.01; // Set gain to half volume
 
   // Connect the Nodes
   oscillator.connect(gain); // Connect oscillator to gain
@@ -638,6 +794,9 @@ function startOsc(frequency) {
 
   oscillator.stop(audioCtx.currentTime + 0.1);
 }
+
+
+////// END SOUND PASTE ///////
 
 /*DUMPSTER */
   ///////* PICK COLOR FROM CANVAS *//////
@@ -656,7 +815,7 @@ function startOsc(frequency) {
   //     console.log('mousex pos: ' + x);
   //     console.log('mousey pos: ' + y);
 
-  //     let pixel = context.getImageData(x, y, 1, 1); //x y pos of ever 1 x 1 pixel 
+  //     let pixel = context.getImageData(x, y, 1, 1); //x y pos of ever 1 x 1 pixel
   //     let data = pixel.data;
 
   //     console.log('data: ' + data);
@@ -697,7 +856,7 @@ function startOsc(frequency) {
   //     console.log('mousex pos: ' + x);
   //     console.log('mousey pos: ' + y);
 
-  //     let pixel = context.getImageData(x, y, 1, 1); //x y pos of ever 1 x 1 pixel 
+  //     let pixel = context.getImageData(x, y, 1, 1); //x y pos of ever 1 x 1 pixel
   //     let data = pixel.data;
 
   //     console.log('data: ' + data);
